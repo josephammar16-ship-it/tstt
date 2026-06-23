@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AFK Galaxy Miner</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: radial-gradient(circle at top, #050816, #000);
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      color: #7dd3fc;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin: 10px auto;
+      width: 300px;
+      border-radius: 15px;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #7dd3fc;
+      font-weight: bold;
+    }
+
+    .small {
+      opacity: 0.7;
+      font-size: 13px;
+    }
+
+    .stars::after {
+      content: "";
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(white 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: move 60s linear infinite;
+      opacity: 0.2;
+    }
+
+    @keyframes move {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-1000px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="stars"></div>
+
+  <div class="container">
+    <h1>🚀 AFK Galaxy Miner</h1>
+
+    <div class="panel">
+      <h2>💰 Credits</h2>
+      <h1 id="money">0</h1>
+      <p class="small">+ <span id="income">1</span> / sec</p>
+    </div>
+
+    <div class="panel">
+      <h2>🚀 Ship Upgrade</h2>
+      <p>Cost: <span id="cost">50</span></p>
+      <button onclick="upgrade()">Upgrade Ship</button>
+    </div>
+
+    <div class="panel">
+      <h2>🌌 Zone</h2>
+      <p id="zone">Earth Orbit</p>
+      <button onclick="nextZone()">Travel</button>
+    </div>
+  </div>
+
+  <script>
+    // DATA
+    let money = 0;
+    let income = 1;
+    let cost = 50;
+    let zoneIndex = 0;
+
+    const zones = [
+      "Earth Orbit",
+      "Moon Belt",
+      "Mars Mining Field",
+      "Asteroid Belt",
+      "Jupiter Cloud Mines",
+      "Deep Space Core"
+    ];
+
+    // LOAD SAVE
+    if (localStorage.getItem("afkSave")) {
+      const save = JSON.parse(localStorage.getItem("afkSave"));
+      money = save.money;
+      income = save.income;
+      cost = save.cost;
+      zoneIndex = save.zoneIndex;
+    }
+
+    // SAVE
+    function saveGame() {
+      localStorage.setItem("afkSave", JSON.stringify({
+        money, income, cost, zoneIndex
+      }));
+    }
+
+    // UPDATE UI
+    function update() {
+      document.getElementById("money").innerText = Math.floor(money);
+      document.getElementById("income").innerText = income;
+      document.getElementById("cost").innerText = cost;
+      document.getElementById("zone").innerText = zones[zoneIndex];
+    }
+    update();
+
+    // AFK LOOP
+    setInterval(() => {
+      money += income;
+      update();
+      saveGame();
+    }, 1000);
+
+    // UPGRADE SHIP
+    function upgrade() {
+      if (money >= cost) {
+        money -= cost;
+        income += 1;
+        cost = Math.floor(cost * 1.7);
+        update();
+      }
+    }
+
+    // NEXT ZONE
+    function nextZone() {
+      if (zoneIndex < zones.length - 1) {
+        if (money >= (zoneIndex + 1) * 200) {
+          money -= (zoneIndex + 1) * 200;
+          zoneIndex++;
+          income += 2;
+          update();
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
